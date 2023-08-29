@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- tailwind css and daisy ui cdn  -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.6.2/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- font awesome link  -->
+    <script src="https://kit.fontawesome.com/985549e602.js" crossorigin="anonymous"></script>
+    <title>AI Universe Hub</title>
+</head>
+<body>
+    <header  class="text-center">
+        <h1 class="text-4xl font-bold mt-10">AI Universe Hub</h1>
+        <button class="btn btn-error my-5 text-white">Sort By Date</button>
+    </header>
+    <main class="px-[10%] mb-10">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="container">
+
+        </section>
+        <section>
+              <!-- You can open the modal using ID.showModal() method -->
+        <dialog id="a" class="modal">
+        <form method="dialog" class="modal-box w-11/12 max-w-5xl p-20" id="details">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="card card-compact bg-red-50 border border-red-500 p-10">
+                    <h1 class="text-lg font-semibold">${details.description}</h1>
+                    <div class="grid grid-cols-3 gap-5 my-2">
+                        <h1 class="rounded-lg bg-amber-50 p-2 text-center text-sm px-5 flex flex-nowrap justifu-center items-center font-bold text-green-500">${details?.pricing[0]?.price} ${details?.pricing[0]?.plan}</h1>
+                        <h1 class="rounded-lg bg-amber-50 p-2 text-center text-sm px-5 flex flex-nowrap justifu-center items-center font-bold text-orange-500">${details?.pricing[1]?.price} ${details?.pricing[0]?.plan}</h1>
+                        <h1 class="rounded-lg bg-amber-50 p-2 text-center text-sm px-5 flex flex-nowrap justifu-center items-center font-bold text-red-500">${details?.pricing[2]?.price} ${details?.pricing[0]?.plan}</h1>
+                    </div>
+                    <div class="grid grid-cols-2 gap-5">
+                        <ul class="space-y-2">
+                            <h1 class="text-xl font-semibold">Features</h1>
+                            <li class="text-xs">${details?.features[0]?.feature_name}</li>
+                            <li class="text-xs">${details?.features[1]?.feature_name}</li>
+                            <li class="text-xs">${details?.features[2]?.feature_name}</li>
+                        </ul>
+                        <ul class="space-y-2">
+                            <h1 class="text-xl font-semibold">Integrations</h1>
+                            <li class="text-xs">${details?.integrations[0]}</li>
+                            <li class="text-xs">${details?.integrations[1]}</li>
+                            <li class="text-xs">${details?.integrations[2]}</li>
+                        </ul>
+                    </div>
+
+                  </div>
+                <div class="card card-compact bg-base-100 border">
+                    <figure><img src="${details.image_link[0]}" alt="logo" /></figure>
+                    <div class="card-body text-center">
+                      <h2 class="text-xl font-bold">${details.input_output_examples[0].input}</h2>
+                      <p>${details.input_output_examples[0].output}</p>
+                    </div>
+                  </div>
+            </div>
+        </form>
+        </dialog>
+        </section>
+
+    </main>
+        <footer class="footer py-10 px-[10%] bg-gray-50">
+            <div>
+              <span class="footer-title">Services</span> 
+              <a class="link link-hover">Branding</a>
+              <a class="link link-hover">Design</a>
+              <a class="link link-hover">Marketing</a>
+              <a class="link link-hover">Advertisement</a>
+            </div> 
+            <div>
+              <span class="footer-title">Company</span> 
+              <a class="link link-hover">About us</a>
+              <a class="link link-hover">Contact</a>
+              <a class="link link-hover">Jobs</a>
+              <a class="link link-hover">Press kit</a>
+            </div> 
+            <div>
+              <span class="footer-title">Legal</span> 
+              <a class="link link-hover">Terms of use</a>
+              <a class="link link-hover">Privacy policy</a>
+              <a class="link link-hover">Cookie policy</a>
+            </div>
+          </footer>
+        <script>
+            let i = 0;
+            const container = document.getElementById('container');
+            const loadData = async() => {
+                const res = await fetch(`https://openapi.programming-hero.com/api/ai/tools`);
+                const data = await res.json();
+                displayData(data)
+            }
+            loadData();
+            const displayData = data => {
+                const allAi =data.data.tools;
+                allAi.forEach(ai => {
+                    i++;
+                    const features =ai.features;
+                    const card = document.createElement('div');
+                    card.classList = `card card-compact bg-base-100 border`;
+                    card.innerHTML = `
+                    <figure class="px-5 h-52"><img src="${ai.image}" alt="ai" class="rounded-xl f-full w-fit" /></figure>
+                    <div class="card-body">
+                        <h2 class="text-lg font-semibold">Features</h2>
+                        <div id="featureContainer${i}" class="h-20">
+                        </div>
+                        <hr>
+                        <div class="flex justify-between items-center gap-2">
+                            <div class="">
+                                <h2 class="text-xl font-semibold my-2">${ai.name}${ai.id}</h2>
+                                <p class="flex justify-start items-center text-base gap-2"><i class="fa-solid fa-calendar-days"></i> ${ai.published_in}</p>
+                            </div>
+                            <div class="text-lg font-extralight text-orange-600 bg-orange-200 h-8 w-8 rounded-full flex justify-center items-center cursor-pointer" onclick="handleShowDetails('${ai.id}')">    
+                                <i class="fa-solid fa-arrow-right "></i>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                    container.appendChild(card)
+                    let featuresField = document.getElementById(`featureContainer${i}`);
+                    let a = 1;
+                    features.forEach (feature =>{
+                                const p = document.createElement('p')
+                                p.innerHTML =`${a++}. ${feature}`;
+                                featuresField.appendChild(p);
+                            })
+                });
+            }
+            const handleShowDetails =async (id) => {
+            const res = await fetch(`https://openapi.programming-hero.com/api/ai/tool/${id}`);
+            const data = await res.json();
+            const details = data.data;
+            showPhoneDetails(details)
+        }
+
+        const showPhoneDetails = (details) => {
+            console.log(details);
+            const detailsFiled = document.getElementById('details');
+            detailsFiled.innerText = '';
+            a.showModal()
+            const div = document.createElement('div');
+            div.innerHTML = `
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="card card-compact bg-red-50 border border-red-500 p-10">
+                    <h1 class="text-lg font-semibold">${details.description}</h1>
+                    <div class="grid grid-cols-3 gap-5 my-2">
+                        <h1 class="rounded-lg bg-amber-50 p-2 text-center text-sm px-5 flex flex-nowrap justifu-center items-center font-bold text-green-500">${details?.pricing[0]?.price} ${details?.pricing[0]?.plan}</h1>
+                        <h1 class="rounded-lg bg-amber-50 p-2 text-center text-sm px-5 flex flex-nowrap justifu-center items-center font-bold text-orange-500">${details?.pricing[1]?.price} ${details?.pricing[0]?.plan}</h1>
+                        <h1 class="rounded-lg bg-amber-50 p-2 text-center text-sm px-5 flex flex-nowrap justifu-center items-center font-bold text-red-500">${details?.pricing[2]?.price} ${details?.pricing[0]?.plan}</h1>
+                    </div>
+                    <div class="grid grid-cols-2 gap-5">
+                        <ul class="space-y-2">
+                            <h1 class="text-xl font-semibold">Features</h1>
+                            <li class="text-xs">${details?.features[1]?.feature_name || 'No data find'}</li>
+                            <li class="text-xs">${details?.features[2]?.feature_name || 'No data find'}</li>
+                            <li class="text-xs">${details?.features[3]?.feature_name || 'No data find'}</li>
+                        </ul>
+                        <ul class="space-y-2">
+                            <h1 class="text-xl font-semibold">Integrations</h1>
+                            <li class="text-xs">${details?.integrations[0] || 'No data find'}</li>
+                            <li class="text-xs">${details?.integrations[1] || 'No data find'}</li>
+                            <li class="text-xs">${details?.integrations[2] || 'No data find'}</li>
+                        </ul>
+                    </div>
+
+                  </div>
+                <div class="card card-compact bg-base-100 border">
+                    <figure><img src="${details.image_link[0]}" alt="logo" /></figure>
+                    <div class="card-body text-center">
+                      <h2 class="text-xl font-bold">${details.input_output_examples[0].input}</h2>
+                      <p>${details.input_output_examples[0].output}</p>
+                    </div>
+                  </div>
+            </div>
+            `
+            detailsFiled.appendChild(div);
+        }
+        </script>
+</body>
+</html>
